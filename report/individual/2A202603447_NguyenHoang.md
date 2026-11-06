@@ -10,7 +10,8 @@
 | --- | --- |
 | [`day01_lab.ipynb`](day01_lab.ipynb) — notebook đã chạy, còn output | ☑ |
 | [`lab1_report.json`](lab1_report.json) — do ô "Báo cáo cuối" sinh ra | ☑ |
-| [`hand_calc.jpg`](hand_calc.jpg) — ảnh tính tay có các bước | ☐ |
+| [`hand_calc.jpg`](hand_calc.jpg) — ảnh tính tay có các bước (bài 1–4) | ☑ |
+| [`hand_calc2.jpg`](hand_calc2.jpg) — ảnh tính tay (bài 5) | ☑ |
 
 Bộ kiểm tra: **15/15 ✅** (TODO 1.1 → 4.4 + 5 phép tính tay). Đủ 10 dự đoán. Notebook chạy trên CPU (máy cá nhân, nbconvert).
 Phần 4 gọi API thật (`LLM_PROVIDER = "openai"`, `gpt-6-luna` / `gpt-6.1-terra`). Tổng chi phí cả bài < $0.01.
