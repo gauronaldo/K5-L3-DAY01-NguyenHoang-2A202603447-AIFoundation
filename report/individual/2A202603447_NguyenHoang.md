@@ -53,6 +53,10 @@ Dự đoán đúng: model lớn hơn model nhỏ ~0.03 F1 (1 tin) và đắt **1
 - **Case #47** `lol I just got a text saying I won £1000 and to call some 0906 number, people still fall for that?`: là ham, nhưng Encoder + MLP head
   đoán spam. Vector câu nằm gần chính tin lừa đảo "won £1000, call 0906" vì encoder đo **chủ đề**, không đo **ý định** (kể lại để chê).
   BoW đúng nhờ "lol", "I", "people". LLM đúng vì hiểu đây là chuyện kể.
+- **Vì sao test thường quá lạc quan (đo trên split của tôi):** notebook chỉ bỏ trùng tuyệt đối, nên **39,5%** spam trong test vẫn có bản gần trùng
+  trong train (Jaccard ≥ 0,6; 26,7% ở mức ≥ 0,8), ham chỉ 3,2%. BoW + LogReg bắt **94%** spam có "bản sao" nhưng chỉ **71%** spam "mới".
+  Với LLM, F1 0,974–1,000 trên SUB cũng cần đọc thận trọng: 40 tin cho khoảng tin cậy 95% của recall 19/20 là 0,76–0,99, dataset công khai từ 2011
+  (có thể đã nằm trong dữ liệu pre-train), và ví dụ few-shot *"Send a logo 2 ur lover…"* có bản giống hệt về từ trong SUB.
 - 7 case làm mọi model tự train sai: 5 *Spam giọng tự nhiên* (#12, 13, 14, 16, 19), #22 (giả ngân hàng) và #31. LLM đúng cả 7.
 - **Prompt injection:** 4a đã đúng 6/6, nên bộ case không đo được lợi ích của prompt phòng thủ (4d cũng 6/6, không làm hỏng nhóm nào).
 - Bonus: 6 case tự viết (`MY_CASES`). Model tự train chỉ đúng 2–3/6, LLM đúng 6/6. Encoder nhầm OTP "staff will NEVER call you" và tin kể về cuộc gọi lừa đảo thành spam.
@@ -86,6 +90,7 @@ Thêm bước chuẩn hoá leetspeak / chữ tách rời và blacklist đầu s�
 | Phần | Hỏi AI gì | AI làm gì | Kiểm chứng |
 | --- | --- | --- | --- |
 | 4 | Viết `call_openai`, `build_classification_prompt`, `parse_label`, `llm_classify_batch` theo TODO 4.1–4.4 (Claude Code, Opus 5.5) | Code gọi Chat Completions với `**provider_kwargs(max_tokens)`, prompt zero/few-shot, parse nhãn chịu lỗi, tính chi phí theo token ước tính | Đọc lại trước khi gọi API; ô kiểm tra bằng API giả lập ✅ |
+| Bonus | Side lab `src/optional_llm_api/` (Claude Code) | Viết `solution.py` (7 hàm theo template), chạy bài 2.1 với API thật, trả lời bài tập 2.1–2.3 | `pytest tests/test_solution.py -v`: 19/19 pass; chạy thử `compare_models`, `batch_compare` và chatbot streaming với API thật |
 | 4 | Lỗi `TypeError: process() takes no keyword arguments`; LLM F1 = 0 ở lần chạy đầu | Nâng `brotli` 1.0.9 → 1.2.1; phát hiện `max_completion_tokens=3` làm `gpt-6-luna` trả `content=''` (`finish_reason="length"`), đổi thành 16 | Gọi API thử với 3 và 50 token; chạy lại notebook: invalid = 0, F1 LLM 0.974–1.000 |
 
 **Điều hiểu ra:** muốn biết một thành phần (hidden layer) có tác dụng không thì phải làm ablation. MLP thắng LogReg nhưng bản bỏ ReLU cũng thắng,
